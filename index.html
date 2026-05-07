@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vale Doc</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    
+<h2 class="sr-only">ValeDoc — sistema de documentação visual estilo Kanban com CRUD completo</h2>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="ti ti-layout-kanban" aria-hidden="true"></i></div>
+    <div>
+      <div class="logo-text">ValeDoc</div>
+      <div class="logo-sub">Documentação visual</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Navegação</div>
+  <div class="sidebar-item active"><i class="ti ti-layout-kanban" aria-hidden="true"></i> Board <span class="sidebar-badge" id="total-badge">6</span></div>
+  <div class="sidebar-item"><i class="ti ti-list" aria-hidden="true"></i> Lista</div>
+  <div class="sidebar-item"><i class="ti ti-chart-bar" aria-hidden="true"></i> Relatórios</div>
+
+  <div class="sidebar-section">Categorias</div>
+  <div class="sidebar-item" onclick="filtrarCat('api')"><span class="cat-dot" style="background:#185FA5"></span> API <span class="sidebar-badge cat-count" data-cat="api">2</span></div>
+  <div class="sidebar-item" onclick="filtrarCat('ui')"><span class="cat-dot" style="background:#534AB7"></span> UI <span class="sidebar-badge cat-count" data-cat="ui">1</span></div>
+  <div class="sidebar-item" onclick="filtrarCat('db')"><span class="cat-dot" style="background:#1D9E75"></span> Banco de dados <span class="sidebar-badge cat-count" data-cat="db">1</span></div>
+  <div class="sidebar-item" onclick="filtrarCat('infra')"><span class="cat-dot" style="background:#BA7517"></span> Infra <span class="sidebar-badge cat-count" data-cat="infra">1</span></div>
+  <div class="sidebar-item" onclick="filtrarCat('seg')"><span class="cat-dot" style="background:#993C1D"></span> Segurança <span class="sidebar-badge cat-count" data-cat="seg">1</span></div>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">VS</div>
+      <div>
+        <div class="user-name">Vinicius</div>
+        <div class="user-role">Administrador</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div>
+      <span class="topbar-title">Sistema de Documentação</span>
+      <span class="topbar-sub">Projeto ValeDoc</span>
+    </div>
+    <div class="search-box"><i class="ti ti-search" style="font-size:14px" aria-hidden="true"></i> Buscar documentos...</div>
+    <button class="btn" onclick="filtrarCat(null)"><i class="ti ti-x" style="font-size:13px" aria-hidden="true"></i> Limpar filtro</button>
+    <button class="btn btn-primary" onclick="abrirModal()"><i class="ti ti-plus" style="font-size:13px" aria-hidden="true"></i> Novo documento</button>
+  </div>
+
+  <div class="filters">
+    <span style="font-size:11px;color:var(--color-text-tertiary);margin-right:4px">Filtrar:</span>
+    <button class="filter-chip active" onclick="filtrarStatus(null,this)">Todos</button>
+    <button class="filter-chip" onclick="filtrarStatus('backlog',this)">Backlog</button>
+    <button class="filter-chip" onclick="filtrarStatus('em-progresso',this)">Em progresso</button>
+    <button class="filter-chip" onclick="filtrarStatus('revisao',this)">Revisão</button>
+    <button class="filter-chip" onclick="filtrarStatus('concluido',this)">Concluído</button>
+  </div>
+
+  <div class="board" id="board">
+    <div class="col" id="col-backlog" ondragover="dragOver(event)" ondrop="drop(event,'backlog')" ondragleave="dragLeave(event)">
+      <div class="col-head"><span class="col-dot" style="background:#888780"></span><span class="col-name">Backlog</span><span class="col-count" id="cnt-backlog">2</span></div>
+      <div id="cards-backlog"></div>
+      <button class="add-btn" onclick="abrirModal('backlog')"><i class="ti ti-plus" style="font-size:13px" aria-hidden="true"></i> Adicionar</button>
+    </div>
+    <div class="col" id="col-em-progresso" ondragover="dragOver(event)" ondrop="drop(event,'em-progresso')" ondragleave="dragLeave(event)">
+      <div class="col-head"><span class="col-dot" style="background:#378ADD"></span><span class="col-name">Em progresso</span><span class="col-count" id="cnt-em-progresso">2</span></div>
+      <div id="cards-em-progresso"></div>
+      <button class="add-btn" onclick="abrirModal('em-progresso')"><i class="ti ti-plus" style="font-size:13px" aria-hidden="true"></i> Adicionar</button>
+    </div>
+    <div class="col" id="col-revisao" ondragover="dragOver(event)" ondrop="drop(event,'revisao')" ondragleave="dragLeave(event)">
+      <div class="col-head"><span class="col-dot" style="background:#EF9F27"></span><span class="col-name">Revisão</span><span class="col-count" id="cnt-revisao">1</span></div>
+      <div id="cards-revisao"></div>
+      <button class="add-btn" onclick="abrirModal('revisao')"><i class="ti ti-plus" style="font-size:13px" aria-hidden="true"></i> Adicionar</button>
+    </div>
+    <div class="col" id="col-concluido" ondragover="dragOver(event)" ondrop="drop(event,'concluido')" ondragleave="dragLeave(event)">
+      <div class="col-head"><span class="col-dot" style="background:#639922"></span><span class="col-name">Concluído</span><span class="col-count" id="cnt-concluido">1</span></div>
+      <div id="cards-concluido"></div>
+      <button class="add-btn" onclick="abrirModal('concluido')"><i class="ti ti-plus" style="font-size:13px" aria-hidden="true"></i> Adicionar</button>
+    </div>
+    <button class="add-col"><i class="ti ti-plus" style="font-size:15px" aria-hidden="true"></i> Nova coluna</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" style="display:none">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modal-titulo-label">Novo documento</span>
+      <button class="icon-btn" onclick="fecharModal()" aria-label="fechar"><i class="ti ti-x" style="font-size:16px" aria-hidden="true"></i></button>
+    </div>
+    <div class="field"><label>Título *</label><input id="f-titulo" type="text" placeholder="Nome da documentação..."></div>
+    <div class="field"><label>Descrição</label><textarea id="f-desc" placeholder="Descreva o conteúdo..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field"><label>Categoria</label>
+        <select id="f-cat">
+          <option value="api">API</option>
+          <option value="ui">UI</option>
+          <option value="db">Banco de dados</option>
+          <option value="infra">Infra</option>
+          <option value="seg">Segurança</option>
+        </select>
+      </div>
+      <div class="field"><label>Coluna</label>
+        <select id="f-col">
+          <option value="backlog">Backlog</option>
+          <option value="em-progresso">Em progresso</option>
+          <option value="revisao">Revisão</option>
+          <option value="concluido">Concluído</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvar()">Salvar documento</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i class="ti ti-check" style="font-size:14px" aria-hidden="true"></i><span id="toast-msg"></span></div>
+
+<script src="js/index.js"></script>
+</body>
+</html>
